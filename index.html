@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>구글 시트 조건부 함수 완전 가이드</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="header__title">📊 구글 시트 조건부 함수 완전 가이드</h1>
+            <p class="header__subtitle">한 페이지에서 익히는 모든 조건부 함수와 활용법</p>
+            <div class="search-container">
+                <input type="text" id="searchInput" class="form-control search-input" placeholder="함수명이나 키워드로 검색하세요...">
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav-bar">
+        <div class="container">
+            <ul class="nav-list">
+                <li><a href="#basics" class="nav-link">기초 개념</a></li>
+                <li><a href="#lookup" class="nav-link">검색 함수</a></li>
+                <li><a href="#if-functions" class="nav-link">조건 함수</a></li>
+                <li><a href="#query" class="nav-link">쿼리 함수</a></li>
+                <li><a href="#importrange" class="nav-link">외부 데이터</a></li>
+                <li><a href="#errors" class="nav-link">오류 해결</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main">
+        <div class="container">
+            <!-- 기초 개념 섹션 -->
+            <section id="basics" class="section">
+                <h2 class="section__title">📐 기초 개념: 행, 열, 키 이해하기</h2>
+                
+                <div class="grid-demo">
+                    <h3>인터랙티브 그리드 다이어그램</h3>
+                    <div class="grid-container">
+                        <div class="grid-header">
+                            <div class="cell-label"></div>
+                            <div class="column-label" data-col="A">A</div>
+                            <div class="column-label" data-col="B">B</div>
+                            <div class="column-label" data-col="C">C</div>
+                            <div class="column-label" data-col="D">D</div>
+                        </div>
+                        <div class="grid-row" data-row="1">
+                            <div class="row-label">1</div>
+                            <div class="grid-cell" data-row="1" data-col="A">학번</div>
+                            <div class="grid-cell" data-row="1" data-col="B">이름</div>
+                            <div class="grid-cell" data-row="1" data-col="C">점수</div>
+                            <div class="grid-cell" data-row="1" data-col="D">학과</div>
+                        </div>
+                        <div class="grid-row" data-row="2">
+                            <div class="row-label">2</div>
+                            <div class="grid-cell key-cell" data-row="2" data-col="A">2023001</div>
+                            <div class="grid-cell" data-row="2" data-col="B">김철수</div>
+                            <div class="grid-cell" data-row="2" data-col="C">85</div>
+                            <div class="grid-cell" data-row="2" data-col="D">컴퓨터학과</div>
+                        </div>
+                        <div class="grid-row" data-row="3">
+                            <div class="row-label">3</div>
+                            <div class="grid-cell key-cell" data-row="3" data-col="A">2023002</div>
+                            <div class="grid-cell" data-row="3" data-col="B">이영희</div>
+                            <div class="grid-cell" data-row="3" data-col="C">92</div>
+                            <div class="grid-cell" data-row="3" data-col="D">경영학과</div>
+                        </div>
+                        <div class="grid-row" data-row="4">
+                            <div class="row-label">4</div>
+                            <div class="grid-cell key-cell" data-row="4" data-col="A">2023003</div>
+                            <div class="grid-cell" data-row="4" data-col="B">박민수</div>
+                            <div class="grid-cell" data-row="4" data-col="C">78</div>
+                            <div class="grid-cell" data-row="4" data-col="D">물리학과</div>
+                        </div>
+                    </div>
+                    <div class="grid-explanation">
+                        <div class="explanation-item">
+                            <div class="explanation-icon row-icon">⬅️➡️</div>
+                            <div class="explanation-content">
+                                <h4>행 (Row)</h4>
+                                <p>가로 방향으로 배열된 셀들의 집합으로, 숫자로 식별됩니다. 하나의 레코드나 개체의 모든 정보를 담습니다.</p>
+                            </div>
+                        </div>
+                        <div class="explanation-item">
+                            <div class="explanation-icon col-icon">⬆️⬇️</div>
+                            <div class="explanation-content">
+                                <h4>열 (Column)</h4>
+                                <p>세로 방향으로 배열된 셀들의 집합으로, 알파벳으로 식별됩니다. 같은 속성의 데이터를 담습니다.</p>
+                            </div>
+                        </div>
+                        <div class="explanation-item">
+                            <div class="explanation-icon key-icon">🔑</div>
+                            <div class="explanation-content">
+                                <h4>키 (Key)</h4>
+                                <p>각 행을 고유하게 식별할 수 있는 값입니다. 중복되면 안 되는 고유 식별자 역할을 합니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LOOKUP 함수군 -->
+            <section id="lookup" class="section">
+                <h2 class="section__title">🔍 LOOKUP 함수군: 데이터 검색의 핵심</h2>
+                
+                <div class="function-grid">
+                    <div class="function-card">
+                        <h3>VLOOKUP</h3>
+                        <div class="function-syntax">
+                            <code>=VLOOKUP(search_key, range, index, is_sorted)</code>
+                            <button class="copy-btn" data-text="=VLOOKUP(search_key, range, index, is_sorted)">복사</button>
+                        </div>
+                        <p>세로 방향으로 값을 검색하여 같은 행의 다른 열 값을 반환합니다.</p>
+                        <div class="example-group">
+                            <h4>예제:</h4>
+                            <div class="code-example">
+                                <code>=VLOOKUP("김철수", A2:D10, 3, FALSE)</code>
+                                <button class="copy-btn" data-text='=VLOOKUP("김철수", A2:D10, 3, FALSE)'>복사</button>
+                            </div>
+                            <p class="example-desc">A2:D10 범위에서 "김철수"를 찾아 3번째 열의 값 반환</p>
+                        </div>
+                    </div>
+
+                    <div class="function-card">
+                        <h3>HLOOKUP</h3>
+                        <div class="function-syntax">
+                            <code>=HLOOKUP(search_key, range, index, is_sorted)</code>
+                            <button class="copy-btn" data-text="=HLOOKUP(search_key, range, index, is_sorted)">복사</button>
+                        </div>
+                        <p>가로 방향으로 값을 검색하여 같은 열의 다른 행 값을 반환합니다.</p>
+                        <div class="example-group">
+                            <h4>예제:</h4>
+                            <div class="code-example">
+                                <code>=HLOOKUP("1월", A1:M3, 2, FALSE)</code>
+                                <button class="copy-btn" data-text='=HLOOKUP("1월", A1:M3, 2, FALSE)'>복사</button>
+                            </div>
+                            <p class="example-desc">가로로 배치된 월별 데이터에서 "1월"의 값 찾기</p>
+                        </div>
+                    </div>
+
+                    <div class="function-card">
+                        <h3>XLOOKUP</h3>
+                        <div class="function-syntax">
+                            <code>=XLOOKUP(search_key, lookup_range, result_range, missing_value)</code>
+                            <button class="copy-btn" data-text="=XLOOKUP(search_key, lookup_range, result_range, missing_value)">복사</button>
+                        </div>
+                        <p>양방향 검색을 지원하는 더 유연한 검색 함수입니다.</p>
+                        <div class="example-group">
+                            <h4>예제:</h4>
+                            <div class="code-example">
+                                <code>=XLOOKUP(A2, B:B, C:C, "없음")</code>
+                                <button class="copy-btn" data-text='=XLOOKUP(A2, B:B, C:C, "없음")'>복사</button>
+                            </div>
+                            <p class="example-desc">A2 값을 B열에서 찾아 C열의 대응값 반환, 없으면 "없음" 표시</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-table">
+                    <h3>언제 어떤 함수를 사용할까요?</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>함수</th>
+                                <th>검색 방향</th>
+                                <th>장점</th>
+                                <th>제한사항</th>
+                                <th>추천 상황</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>VLOOKUP</strong></td>
+                                <td>세로 (↓)</td>
+                                <td>가장 널리 사용됨</td>
+                                <td>왼쪽 열에서만 검색</td>
+                                <td>일반적인 데이터 테이블</td>
+                            </tr>
+                            <tr>
+                                <td><strong>HLOOKUP</strong></td>
+                                <td>가로 (→)</td>
+                                <td>가로 배치 데이터에 적합</td>
+                                <td>첫 번째 행에서만 검색</td>
+                                <td>월별/분기별 데이터</td>
+                            </tr>
+                            <tr>
+                                <td><strong>XLOOKUP</strong></td>
+                                <td>양방향</td>
+                                <td>가장 유연함</td>
+                                <td>구버전에서 지원 안됨</td>
+                                <td>복잡한 검색 요구사항</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- IF 함수군 -->
+            <section id="if-functions" class="section">
+                <h2 class="section__title">⚡ IF 함수군: 조건부 로직의 마스터</h2>
+
+                <div class="function-grid">
+                    <div class="function-card">
+                        <h3>IF</h3>
+                        <div class="function-syntax">
+                            <code>=IF(logical_expression, value_if_true, value_if_false)</code>
+                            <button class="copy-btn" data-text="=IF(logical_expression, value_if_true, value_if_false)">복사</button>
+                        </div>
+                        <p>조건에 따라 다른 값을 반환하는 기본 조건함수입니다.</p>
+                        <div class="example-group">
+                            <h4>예제:</h4>
+                            <div class="code-example">
+                                <code>=IF(A1>80, "합격", "불합격")</code>
+                                <button class="copy-btn" data-text'=IF(A1>80, "합격", "불합격")'>복사</button>
+                            </div>
+                            <div class="code-example">
+                                <code>=IF(AND(A1>60, B1>60), "통과", "재시험")</code>
+                                <button class="copy-btn" data-text='=IF(AND(A1>60, B1>60), "통과", "재시험")'>복사</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="function-card">
+                        <h3>IFS</h3>
+                        <div class="function-syntax">
+                            <code>=IFS(condition1, value1, condition2, value2, ...)</code>
+                            <button class="copy-btn" data-text="=IFS(condition1, value1, condition2, value2, ...)">복사</button>
+                        </div>
+                        <p>여러 조건을 순차적으로 평가하여 해당하는 값을 반환합니다.</p>
+                        <div class="example-group">
+                            <h4>예제:</h4>
+                            <div class="code-example">
+                                <code>=IFS(A1>=90, "A", A1>=80, "B", A1>=70, "C", TRUE, "F")</code>
+                                <button class="copy-btn" data-text='=IFS(A1>=90, "A", A1>=80, "B", A1>=70, "C", TRUE, "F")'>복사</button>
+                            </div>
+                            <p class="example-desc">점수에 따른 등급 부여 (90이상=A, 80이상=B, 70이상=C, 나머지=F)</p>
+                        </div>
+                    </div>
+
+                    <div class="function-card">
+                        <h3>IFERROR</h3>
+                        <div class="function-syntax">
+                            <code>=IFERROR(value, value_if_error)</code>
+                            <button class="copy-btn" data-text="=IFERROR(value, value_if_error)">복사</button>
+                        </div>
+                        <p>오류 발생 시 대체값을 반환하여 에러를 방지합니다.</p>
+                        <div class="example-group">
+                            <h4>예제:</h4>
+                            <div class="code-example">
+                                <code>=IFERROR(VLOOKUP(A1, B:C, 2, FALSE), "미등록")</code>
+                                <button class="copy-btn" data-text='=IFERROR(VLOOKUP(A1, B:C, 2, FALSE), "미등록")'>복사</button>
+                            </div>
+                            <p class="example-desc">VLOOKUP에서 값을 찾지 못하면 "미등록" 표시</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="conditional-functions">
+                    <h3>조건부 집계 함수들</h3>
+                    <div class="function-grid">
+                        <div class="function-card">
+                            <h4>SUMIF / SUMIFS</h4>
+                            <div class="code-example">
+                                <code>=SUMIF(A:A, ">=100", B:B)</code>
+                                <button class="copy-btn" data-text'=SUMIF(A:A, ">=100", B:B)'>복사</button>
+                            </div>
+                            <p>조건에 맞는 값들의 합계를 구합니다.</p>
+                        </div>
+                        <div class="function-card">
+                            <h4>COUNTIF / COUNTIFS</h4>
+                            <div class="code-example">
+                                <code>=COUNTIF(A:A, "합격")</code>
+                                <button class="copy-btn" data-text'=COUNTIF(A:A, "합격")'>복사</button>
+                            </div>
+                            <p>조건에 맞는 셀의 개수를 세어줍니다.</p>
+                        </div>
+                        <div class="function-card">
+                            <h4>AVERAGEIF / AVERAGEIFS</h4>
+                            <div class="code-example">
+                                <code>=AVERAGEIF(A:A, ">80", B:B)</code>
+                                <button class="copy-btn" data-text'=AVERAGEIF(A:A, ">80", B:B)'>복사</button>
+                            </div>
+                            <p>조건에 맞는 값들의 평균을 구합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- QUERY 함수 -->
+            <section id="query" class="section">
+                <h2 class="section__title">📊 QUERY 함수: SQL과 같은 강력한 데이터 조작</h2>
+                
+                <div class="query-intro">
+                    <p>QUERY 함수는 SQL과 유사한 문법으로 데이터를 필터링, 정렬, 집계할 수 있는 강력한 함수입니다.</p>
+                </div>
+
+                <div class="query-examples">
+                    <div class="example-card">
+                        <h3>기본 필터링</h3>
+                        <div class="code-example">
+                            <code>=QUERY(A:E, "SELECT * WHERE B > 50")</code>
+                            <button class="copy-btn" data-text'=QUERY(A:E, "SELECT * WHERE B > 50")'>복사</button>
+                        </div>
+                        <p>B열 값이 50보다 큰 모든 행을 선택합니다.</p>
+                    </div>
+
+                    <div class="example-card">
+                        <h3>문자열 검색</h3>
+                        <div class="code-example">
+                            <code>=QUERY(A:E, "SELECT * WHERE C CONTAINS '서울'")</code>
+                            <button class="copy-btn" data-text"=QUERY(A:E, \"SELECT * WHERE C CONTAINS '서울'\")">복사</button>
+                        </div>
+                        <p>C열에 '서울'이 포함된 모든 행을 선택합니다.</p>
+                    </div>
+
+                    <div class="example-card">
+                        <h3>복합 조건</h3>
+                        <div class="code-example">
+                            <code>=QUERY(A:E, "SELECT * WHERE B > 50 AND C = '개발부'")</code>
+                            <button class="copy-btn" data-text"=QUERY(A:E, \"SELECT * WHERE B > 50 AND C = '개발부'\")">복사</button>
+                        </div>
+                        <p>B열이 50보다 크고 C열이 '개발부'인 행을 선택합니다.</p>
+                    </div>
+
+                    <div class="example-card">
+                        <h3>정렬과 제한</h3>
+                        <div class="code-example">
+                            <code>=QUERY(A:E, "SELECT * ORDER BY B DESC LIMIT 10")</code>
+                            <button class="copy-btn" data-text'=QUERY(A:E, "SELECT * ORDER BY B DESC LIMIT 10")'>복사</button>
+                        </div>
+                        <p>B열을 기준으로 내림차순 정렬하여 상위 10개 행만 표시합니다.</p>
+                    </div>
+                </div>
+
+                <div class="query-operators">
+                    <h3>QUERY 연산자 가이드</h3>
+                    <div class="operator-grid">
+                        <div class="operator-card">
+                            <h4>논리 연산자</h4>
+                            <ul>
+                                <li><code>AND</code> - 그리고</li>
+                                <li><code>OR</code> - 또는</li>
+                                <li><code>NOT</code> - 아님</li>
+                            </ul>
+                        </div>
+                        <div class="operator-card">
+                            <h4>문자열 연산자</h4>
+                            <ul>
+                                <li><code>CONTAINS</code> - 포함</li>
+                                <li><code>STARTS WITH</code> - ~로 시작</li>
+                                <li><code>ENDS WITH</code> - ~로 끝남</li>
+                                <li><code>MATCHES</code> - 정규식 매치</li>
+                            </ul>
+                        </div>
+                        <div class="operator-card">
+                            <h4>날짜 함수</h4>
+                            <ul>
+                                <li><code>YEAR()</code> - 연도 추출</li>
+                                <li><code>MONTH()</code> - 월 추출</li>
+                                <li><code>DAY()</code> - 일 추출</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- IMPORTRANGE -->
+            <section id="importrange" class="section">
+                <h2 class="section__title">🔗 IMPORTRANGE: 외부 데이터 연동</h2>
+                
+                <div class="function-card">
+                    <h3>IMPORTRANGE</h3>
+                    <div class="function-syntax">
+                        <code>=IMPORTRANGE("spreadsheet_url", "range_string")</code>
+                        <button class="copy-btn" data-text'=IMPORTRANGE("spreadsheet_url", "range_string")'>복사</button>
+                    </div>
+                    <p>다른 구글 시트에서 데이터를 가져올 수 있습니다.</p>
+                    
+                    <div class="example-group">
+                        <h4>예제:</h4>
+                        <div class="code-example">
+                            <code>=IMPORTRANGE("1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms", "Class Data!A2:E")</code>
+                            <button class="copy-btn" data-text'=IMPORTRANGE("1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms", "Class Data!A2:E")'>복사</button>
+                        </div>
+                        <p class="example-desc">지정된 시트의 'Class Data' 탭에서 A2:E 범위 데이터 가져오기</p>
+                    </div>
+                </div>
+
+                <div class="importrange-tips">
+                    <h3>IMPORTRANGE 활용 팁</h3>
+                    <div class="tip-grid">
+                        <div class="tip-card">
+                            <h4>💡 권한 설정</h4>
+                            <p>처음 사용 시 소스 시트에 대한 액세스 권한을 허용해야 합니다.</p>
+                        </div>
+                        <div class="tip-card">
+                            <h4>⚡ 성능 최적화</h4>
+                            <p>필요한 범위만 지정하여 불필요한 데이터 로딩을 피하세요.</p>
+                        </div>
+                        <div class="tip-card">
+                            <h4>🔄 실시간 업데이트</h4>
+                            <p>소스 데이터가 변경되면 자동으로 반영됩니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 오류 해결 -->
+            <section id="errors" class="section">
+                <h2 class="section__title">🚨 일반적인 오류와 해결방법</h2>
+                
+                <div class="error-grid">
+                    <div class="error-card">
+                        <h3 class="error-name">#N/A</h3>
+                        <div class="error-cause">
+                            <strong>원인:</strong> 검색값을 찾을 수 없음
+                        </div>
+                        <div class="error-solution">
+                            <strong>해결:</strong> IFNA 함수로 감싸서 사용자 정의 메시지 표시
+                            <div class="code-example">
+                                <code>=IFNA(VLOOKUP(A1, B:C, 2, FALSE), "찾을 수 없음")</code>
+                                <button class="copy-btn" data-text'=IFNA(VLOOKUP(A1, B:C, 2, FALSE), "찾을 수 없음")'>복사</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="error-card">
+                        <h3 class="error-name">#REF!</h3>
+                        <div class="error-cause">
+                            <strong>원인:</strong> 잘못된 참조 범위
+                        </div>
+                        <div class="error-solution">
+                            <strong>해결:</strong> 올바른 셀 범위 확인 및 수정
+                            <ul>
+                                <li>삭제된 행/열 참조 확인</li>
+                                <li>범위 선택 다시 확인</li>
+                                <li>절대 참조($) 사용 고려</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="error-card">
+                        <h3 class="error-name">#VALUE!</h3>
+                        <div class="error-cause">
+                            <strong>원인:</strong> 잘못된 데이터 타입
+                        </div>
+                        <div class="error-solution">
+                            <strong>해결:</strong> 데이터 타입 확인 및 변환
+                            <ul>
+                                <li>숫자가 텍스트로 저장되었는지 확인</li>
+                                <li>VALUE() 함수로 텍스트를 숫자로 변환</li>
+                                <li>따옴표 사용법 확인</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="best-practices">
+                    <h3>💡 모범 사례</h3>
+                    <div class="practice-grid">
+                        <div class="practice-card">
+                            <h4>1. 절대 참조 사용</h4>
+                            <p>복사 시 범위가 변하지 않도록 $ 기호를 활용하세요.</p>
+                            <code>$A$1:$C$10</code>
+                        </div>
+                        <div class="practice-card">
+                            <h4>2. 오류 처리</h4>
+                            <p>IFERROR, IFNA 함수로 사용자 친화적인 메시지를 제공하세요.</p>
+                        </div>
+                        <div class="practice-card">
+                            <h4>3. 데이터 검증</h4>
+                            <p>입력 전에 데이터 형식과 범위를 확인하세요.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 구글 시트 조건부 함수 가이드. 모든 예제는 실제 사용 가능합니다.</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
